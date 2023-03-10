@@ -6,26 +6,47 @@
       </header>
 
       <main class="main">
-        <form 
-          class="register" 
+        <form
+          class="register"
           @submit.prevent="targetTodo.id ? editTodo() : addTodo()">
 
           <div class="register__input">
             <p class="register__input__title">やることのタイトル</p>
-            <input v-model="targetTodo.title" type="text" name="title" placeholder="ここにTODOのタイトルを記入してください" required>
+            <input
+              v-model="targetTodo.title"
+              type="text"
+              name="title"
+              placeholder="ここにTODOのタイトルを記入してください"
+              required
+              >
           </div>
           <div class="register__input">
             <p class="register__input__title">やることの内容</p>
-            <textarea v-model="targetTodo.detail" name="detail" rows="3"
-              placeholder="ここにTODOの内容を記入してください。改行は半角スペースに変換されます。" required />
+            <textarea
+              v-model="targetTodo.detail"
+              name="detail"
+              rows="3"
+              placeholder="ここにTODOの内容を記入してください。改行は半角スペースに変換されます。"
+              required
+              />
           </div>
+
           <div class="register__submit">
-            <button class="register__submit__btn" type="submit" name="button">
+            <button
+              class="register__submit__btn"
+              type="submit"
+              name="button"
+              >
+
               <template v-if="targetTodo.id">
-                <span>変更する</span>
+                <span>
+                  変更する
+                </span>
               </template>
               <template v-else>
-                <span>登録する</span>
+                <span>
+                  登録する
+                </span>
               </template>
             </button>
           </div>
@@ -38,21 +59,28 @@
         <div class="todos">
           <template v-if="todos.length">
             <ul class="todos__list">
-              <li 
-                v-for="todo in todos" 
-                :key="todo.id" 
+              <li
+                v-for="todo in todos"
+                :key="todo.id"
                 :class="{ 'is-completed': todo.completed }"
                 >
-
                 <div class="todos__inner">
 
                   <div class="todos__completed">
-                    <button class="todos__completed__btn" type="button" @click="changeCompleted(todo)">
+                    <button
+                      class="todos__completed__btn"
+                      type="button"
+                      @click="changeCompleted(todo)"
+                      >
                       <template v-if="todo.completed">
-                        <span>完了</span>
+                        <span>
+                          完了
+                        </span>
                       </template>
                       <template v-else>
-                        <span>未完了</span>
+                        <span>
+                          未完了
+                        </span>
                       </template>
                     </button>
                   </div>
@@ -63,19 +91,18 @@
                   </div>
 
                   <div class="todos__btn">
-                    <button 
-                      class="todos__btn__edit" 
-                      type="button" 
+                    <button
+                      class="todos__btn__edit"
+                      type="button"
                       @click="showEditor(todo)">
                       編集
                     </button>
 
-                    <button 
-                      class="todos__btn__delete" 
-                      type="button" 
+                    <button
+                      class="todos__btn__delete"
+                      type="button"
                       @click="deleteTodo(todo.id)"
                       >
-
                       削除
                     </button>
 
@@ -83,10 +110,10 @@
                 </div>
               </li>
             </ul>
-          </template>
-          <template v-else>
-            <p class="todos__empty">やることリストには何も登録されていません。</p>
-          </template>
+            </template>
+            <template v-else>
+              <p class="todos__empty">やることリストには何も登録されていません。</p>
+            </template>
         </div>
       </main>
 
@@ -101,6 +128,7 @@
 
 <script>
 import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -117,8 +145,6 @@ export default {
   created() {
     axios.get('http://localhost:3000/api/todos/').then(({ data }) => {
       this.todos = data.todos;
-      console.log(data);
-      console.log(this.todos);
       this.targetTodo = this.initTargetTodo();
     }).catch(err => {
       this.showError(err);
@@ -127,22 +153,22 @@ export default {
   methods: {
     initTargetTodo() {
       return {
-      id: null,
-      title: '',
-      detail: '',
-      completed: false,
+        id: null,
+        title: '',
+        detail: '',
+        completed: false,
       };
     },
-    hideError(){
+    hideError() {
       this.errorMessage = '';
     },
 
     showError(err) {
-    if (err.response.data) {
-      this.errorMessage = err.response.data.message;
-    } else {
-      this.errorMessage = 'ネットに接続がされていない、もしくはサーバーとの接続がされていません。ご確認ください。';
-    }
+      if (err.response.data) {
+        this.errorMessage = err.response.data.message;
+      } else {
+        this.errorMessage = 'ネットに接続がされていない、もしくはサーバーとの接続がされていません。ご確認ください。';
+      }
     },
 
     addTodo() {
@@ -158,22 +184,21 @@ export default {
         this.showError(err);
       });
     },
-      changeCompleted(todo) {
-        const targetTodo = { ...todo };
-        this.targetTodo = this.initTargetTodo();
-        
-        axios.patch(`http://localhost:3000/api/todos/${targetTodo.id}`, {
-          completed: !targetTodo.completed,
-        }).then(({ data }) => {
-          this.todos = this.todos.map(todoItem => {
-            if (todoItem.id === targetTodo.id) return data;
-            return todoItem;
-          });
-          this.hideError();
-        }).catch(err => {
-          this.showError(err);
+    changeCompleted(todo) {
+      const targetTodo = { ...todo };
+      this.targetTodo = this.initTargetTodo();
+      axios.patch(`http://localhost:3000/api/todos/${targetTodo.id}`, {
+        completed: !targetTodo.completed,
+      }).then(({ data }) => {
+        this.todos = this.todos.map(todoItem => {
+          if (todoItem.id === targetTodo.id) return data;
+          return todoItem;
         });
-      },
+        this.hideError();
+      }).catch(err => {
+        this.showError(err);
+      });
+    },
 
     showEditor(todo) {
       this.targetTodo = { ...todo };
@@ -187,7 +212,7 @@ export default {
       ) {
         this.targetTodo = this.initTargetTodo();
         return;
-      };
+      }
 
       axios.patch(`http://localhost:3000/api/todos/${this.targetTodo.id}`, {
         title: this.targetTodo.title,
@@ -214,7 +239,7 @@ export default {
     },
 
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

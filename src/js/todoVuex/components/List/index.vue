@@ -4,6 +4,10 @@
       v-for="todo in todos"
       :todo="todo"
       :key="todo.id"
+      :todo-title="todo.title"
+      :todo-detail="todo.detail"
+      :todo-completed="todo.completed"
+      @delete-todo="$emit('delete-todo', todo.id)"
     />
   </ul>
 </template>
@@ -18,7 +22,7 @@ export default {
   props: {
     todos: {
       type: Array,
-      default: function() {
+      default() {
         return [];
       },
     },
